@@ -32,7 +32,7 @@ class Category(MPTTModel):
 class Product(models.Model):
     category = models.ForeignKey(Category, verbose_name="Категория", on_delete=models.CASCADE)
     title = models.CharField(_("Название"), max_length=150)
-    description = models.TextField(_("Цена"), default=0)
+    description = models.TextField(_("Описание"), default=0)
     price = models.PositiveIntegerField(_("Цена"), default = 0)
     slug = models.SlugField(max_length = 150)
     availability = models.BooleanField(_("Наличие"), default = True)

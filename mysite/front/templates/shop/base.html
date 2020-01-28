@@ -1,0 +1,13 @@
+{% comment %} {% load static %} {% endcomment %}
+{% block content %}
+    <div class="row">
+        {% include 'shop/sidebar.html' %}
+        {% block product %}
+            
+            {% for products in page_object.object_list %}
+                {% include 'shop/includes/prod_card.html' %}
+            {% endfor %}
+        {% endblock product %}
+        
+    </div>
+{% endblock content %}

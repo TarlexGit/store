@@ -39,9 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    
     'mptt',
     'photologue',
-    
+    'bootstrap4',
     # 'polls',
     'shop',
 ]
@@ -64,7 +65,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'templates/'), 
+            os.path.join(BASE_DIR, 'front/templates/'), 
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -131,5 +132,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+# STATIC_ROOT = os.path.join(BASE_DIR, 'shop')
+MEDIA_ROOT  = os.path.join(BASE_DIR, 'front')
+MEDIA_URL = '/media/'
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "shop/static/shop"),
+    
+]

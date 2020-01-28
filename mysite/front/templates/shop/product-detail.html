@@ -1,0 +1,94 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="row row-pb-lg">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="product-detail-wrap">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-success" role="alert">
+                            <button class="close" data-dismiss="alert">
+                                <small><sup>x</sup></small>
+                            </button>
+                            <p class="reviews">{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="product-entry">
+                            <div class="product-img"
+                                 style="background-image: url({{ product.photo.image.url }});">
+                                <p class="tag"><span class="sale">Sale</span></p>
+                            </div>
+                            {% for img in product.gallery.photos.all %}
+                                <div class="thumb-nail">
+                                    <a href="#" class="thumb-img"
+                                       style="background-image: url({{ img.image.url }});"></a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="desc">
+                            <h3>{{ product.title }}</h3>
+                            <p class="price">
+                                <span>${{ product.price }}</span>
+                                <span class="rate text-right">
+                                    <i class="icon-star-full"></i>
+                                    <i class="icon-star-full"></i>
+                                    <i class="icon-star-full"></i>
+                                    <i class="icon-star-full"></i>
+                                    <i class="icon-star-half"></i>
+												(74 Rating)
+											</span>
+                            </p>
+                            <p>{{ product.description }}</p>
+                            <div class="color-wrap">
+                                <p class="color-desc">
+                                    Категория:
+                                    <a href="#" style="color: #000;" class="color color-1">
+                                        {{ product.category }}
+                                    </a>
+                                </p>
+                            </div>
+                            <div class="row row-pb-sm">
+                                <form method="post"
+                                      action="{% url 'add_cartitem' product.slug product.id %}">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            {% csrf_token %}
+                                            <span class="input-group-btn">
+                                       	<button type="button" class="quantity-left-minus btn"
+                                                data-type="minus" data-field="quantity">
+                                          <i class="icon-minus2"></i>
+                                       	</button>
+                                   		</span>
+                                            <input type="text" id="quantity" name="quantity"
+                                                   class="form-control input-number" value="1"
+                                                   min="1" max="100">
+                                            <span class="input-group-btn">
+                                       	<button type="button" class="quantity-right-plus btn"
+                                                data-type="plus" data-field="quantity">
+                                            <i class="icon-plus2"></i>
+                                        </button>
+                                    	</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button class="btn-primary btn-addtocart"
+                                                type="submit">
+                                            <i class="icon-shopping-cart"></i>
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
