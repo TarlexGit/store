@@ -58,7 +58,9 @@ class Product(models.Model):
 
 
 class Cart(models.Model):
+    session = models.CharField("Сессия пользователя", max_length=500, null=True, blank=True)
     user = models.ForeignKey(User, verbose_name = 'Покупатель', on_delete = models.CASCADE)
+    #activ cart
     accepted = models.BooleanField(verbose_name = 'Принято к заказу', default = True)
 
     class Meta:
@@ -103,5 +105,5 @@ class Order(models.Model):
 @receiver(post_save, sender=User)
 def create_user_cart(sender, instance, created, **kwargs):
     if created:
-        Cart.object.create(user = instance)
+        Cart.objects.create(user = instance)
 

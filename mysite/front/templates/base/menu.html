@@ -9,7 +9,7 @@
                     <div id="colorlib-logo"><a href="/">Store</a></div>
                 </div>
                 <div class="col-xs-4">
-                    <form method="get" action="{% url 'product_list_url' %}">
+                    <form method="get" action="{% url 'shop:product_list_url' %}">
                         {% csrf_token %}
                         <input class=""
                                type="text"
@@ -41,7 +41,7 @@
                                 {% endrecursetree %}
                             </ul>
                         </li>
-                        <li class="active"><a href="{% url 'sort' %}">Search</a></li>
+                        {% comment %} <li class="active"><a href="{% url 'sort' %}">Search</a></li> {% endcomment %}
                         {% if user.is_authenticated %}
                             <li class="has-dropdown">
                                 <a href="#">Profile</a>

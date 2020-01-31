@@ -11,6 +11,8 @@ from django.db.models import Q
 
 import shop.serializers
 
+from shop.context_processors import list_categoryes
+ 
 # def index(request):
 #     return HttpResponse("Hello, world. You're at the polls index.")
 class ProdList(View):
@@ -113,3 +115,44 @@ class SortProducts(View):
                 "category": category_ser.data
              },
             safe=False)
+
+
+class AddCartItem(View):
+    """Добавление товара в карзину"""
+
+    def check_cart(self, request):
+        if request.user.is_authenticated:
+            cart = Cart.objects.get(user=request.user, accepted=False)
+        else:
+            session_cart = request.session.get('cart')
+            if not session_cart:
+                SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+                session = SessionStore()
+                session.create()
+                session_cart = session.session_key
+                request.session['cart'] = session_cart
+            cart, add = Cart.objects.get_or_create(session=session_cart, accepted=False)
+        return cart
+
+    def post(self, request, slug, pk):
+        quantity = request.POST.get("quantity", None)
+        if quantity is not None and int(quantity) > 0:
+            cart = self.check_cart(request)
+            try:
+                item = CartItem.objects.get(
+                    cart_id=cart.id,
+                    product_id=pk,
+                    cart__accepted=False)
+                item.quantity += int(quantity)
+            except CartItem.DoesNotExist:
+                item = CartItem(
+                    cart_id=cart.id,
+                    product_id=pk,
+                    quantity=int(quantity)
+                )
+            item.save()
+            messages.add_message(request, settings.MY_INFO, "Товар добавлен")
+            return redirect("/detail/{}/".format(slug))
+        else:
+            messages.add_message(request, settings.MY_INFO, "Значение не может быть 0")
+            return redirect("/detail/{}/".format(slug))
