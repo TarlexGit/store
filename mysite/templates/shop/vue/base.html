@@ -1,0 +1,8 @@
+{% extends 'shop/base.html' %}
+{% comment %} {% load static %} {% endcomment %}
+{% block content %}
+    
+    {% block product %}
+        {% include 'shop/vue/list-product-vue.html' %}
+    {% endblock product %}
+{% endblock content %}

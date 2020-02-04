@@ -1,37 +1,59 @@
 from django.contrib import admin
-from django import forms 
+from django import forms
 
 from mptt.admin import MPTTModelAdmin
 
-from photologue.models import Gallery, Photo
 from photologue.admin import GalleryAdmin as GalleryAdminDefault
+from photologue.models import Gallery
 
-from .models import (Category, Product)
-# from mysite.shop.services import services
+from .models import (Category, Product, Cart, CartItem, Order)
 
-# Register your models here.
 
+@admin.register(Category)
 class CategoryMPTTModelAdmin(MPTTModelAdmin):
-    mptt_level_indent = 20 
-    prepopulated_fields = {'slug': ('name', )}
+    mptt_level_indent = 20
+    prepopulated_fields = {"slug": ("name",)}
 
-admin.site.register(Category, CategoryMPTTModelAdmin)   
 
+@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     """Продукты"""
-    list_display = ('title', 'category', 'price', 'quantity')
-    preropulated_fields = {'slug': ('titule',)}
+    list_display = ("title", "category", "price", "quantity")
+    prepopulated_fields = {"slug": ("title",)}
 
-admin.site.register(Product, ProductAdmin)
 
-class Admin(admin.ModelAdmin):
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
     """Товары в корзине"""
-    list_display = ('cart', 'product', 'quantity')
-    
-class GallaryAdminForm(forms.ModelForm):
-    class Meta: 
+    list_display = ("cart", "product", "quantity")
+
+
+class GalleryAdminForm(forms.ModelForm):
+    """Users never need to enter a description on a gallery."""
+
+    class Meta:
         model = Gallery
         exclude = ['description']
 
-class GalaryAdmin(GalleryAdminDefault):
-    form = GallaryAdminForm
+
+class GalleryAdmin(GalleryAdminDefault):
+    form = GalleryAdminForm
+
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    """Корзины"""
+    list_display = ("id", "user", "accepted")
+    list_display_links = ("user",)
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    """Заказы"""
+    list_display = ("id", "cart", "date", "accepted")
+    readonly_fields = ('get_table_products',)
+    list_display_links = ("cart",)
+
+
+admin.site.unregister(Gallery)
+admin.site.register(Gallery, GalleryAdmin)

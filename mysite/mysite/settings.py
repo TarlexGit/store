@@ -41,10 +41,17 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     
     'mptt',
+
     'photologue',
+    'sortedm2m',
+    
+    'rest_framework',
+
     'bootstrap4',
     # 'polls',
     'shop',
+    'country',
+    'profiles',
 ]
 
 SITE_ID = 1
@@ -65,7 +72,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'front/templates/'), 
+            os.path.join(BASE_DIR, 'templates'), 
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -121,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
@@ -135,11 +142,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 # STATIC_ROOT = os.path.join(BASE_DIR, 'shop')
-MEDIA_ROOT  = os.path.join(BASE_DIR, 'front')
+MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "shop/static/shop"),
-    
-]
+STATIC_DIR=os.path.join(BASE_DIR, 'front') 
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "front/shop/static"),
+# ]
+STATICFILES_DIRS = [STATIC_DIR, ]

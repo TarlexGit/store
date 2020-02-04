@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="row">
+        {% include 'shop/list-product.html' %}
+        
+        {% block product %}
+            
+        {% endblock product %}
+    </div>
+{% endblock content %}

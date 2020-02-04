@@ -3,12 +3,15 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.utils.html import format_html, format_html_join
 
 from django.utils.translation import gettext_lazy as _
 
 from photologue.models import Gallery, Photo
 
 from mptt.models import MPTTModel, TreeForeignKey
+
+from django.shortcuts import reverse # for get_absolut_url in Prod 
 
 
 class Category(MPTTModel):  
@@ -48,6 +51,8 @@ class Product(models.Model):
         null = True,
         blank = True)
     
+    def get_absolute_url(self):  # соглашение джанго, возвращаем ссылку на Пост
+        return reverse('shop:product_detail_url', kwargs={'slug': self.slug})
     
     class Meta:
         verbose_name = 'Товар'
@@ -59,7 +64,7 @@ class Product(models.Model):
 
 class Cart(models.Model):
     session = models.CharField("Сессия пользователя", max_length=500, null=True, blank=True)
-    user = models.ForeignKey(User, verbose_name = 'Покупатель', on_delete = models.CASCADE)
+    user = models.ForeignKey(User, verbose_name='Покупатель', on_delete=models.CASCADE, null=True, blank=True)
     #activ cart
     accepted = models.BooleanField(verbose_name = 'Принято к заказу', default = True)
 
@@ -90,9 +95,10 @@ class CartItem(models.Model):
 
 
 class Order(models.Model):
-    cart = models.ForeignKey(Cart, verbose_name = 'Корзина', on_delete = models.CASCADE)
-    accepted = models.BooleanField(verbose_name = 'Заказ выполнен', default = False)
-    date = models.DateTimeField("Дата", default = timezone.now())
+    """Заказы"""
+    cart = models.ForeignKey(Cart, verbose_name='Корзина', on_delete=models.CASCADE)
+    accepted = models.BooleanField(verbose_name='Заказ выполнен', default=False)
+    date = models.DateTimeField("Дата", default=timezone.now())
 
     class Meta:
         verbose_name = 'Заказ'
@@ -100,6 +106,43 @@ class Order(models.Model):
 
     def __str__(self):
         return "{}".format(self.cart)
+
+    def get_table_products(self):
+        table_body = format_html_join(
+            '\n',
+            """<tr>
+            <td>{0}</td>
+            <td>{1}</td>
+            <td>{2}</td>
+            <td>{3}</td>
+            </tr>""",
+            (
+                (item.product.title, item.quantity, item.product.price, item.price_sum)
+                for item in self.cart.cart_item.all()
+            )
+        )
+
+        return format_html(
+            """
+            <table style="width: 100%;">
+            <thead>
+                <tr>
+                    <th class="product-name">Название</th>
+                    <th class="product-article">Количество</th>
+                    <th class="product-quantity">Цена</th>
+                    <th class="product-quantity">Сумма</th>
+                </tr>
+            </thead>
+            <tbody>
+            {}
+            </tbody>
+            </table>
+            """,
+            table_body
+        )
+
+    get_table_products.short_description = 'Товары'
+    get_table_products.allow_tags = True
 
 
 @receiver(post_save, sender=User)
